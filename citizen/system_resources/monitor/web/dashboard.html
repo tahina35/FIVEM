@@ -3,6 +3,9 @@
 
 <div class="text-center mb-4">
     <h2>{{serverName}} Dashboard</h2>
+    {{if(options.txAdminTooOutdated)}}
+        <h2 class="text-danger">This version of txAdmin is too outdated. Please update now.</h2>
+    {{/if}}
 </div>
 
 <div class="row justify-content-md-center">
@@ -32,12 +35,10 @@
                             <option value="" disabled selected>&gt; SELECT</option>
                             <option value="admin_broadcast" {{perms.commandMessage}}>Broadcast Admin Message</option>
                             <option value="ensure_res" {{perms.commandResources}}>Start/Restart resource</option>
-                            <!-- <option value="restart_res" {{perms.commandResources}}>Restart resource</option> -->
-                            <!-- <option value="start_res" {{perms.commandResources}}>Start resource</option> -->
                             <option value="stop_res" {{perms.commandResources}}>Stop resource</option>
                             <option value="refresh_res" {{perms.commandResources}}>Refresh resources</option>
                             <option value="check_txaclient" {{perms.commandResources}}>Check txAdminClient</option>
-                            <option value="kick_all" {{perms.commandKick}}>Kick all players</option>
+                            <option value="kick_all" class="text-danger" {{perms.commandKick}}>Kick all players</option>
                         </select>
                     </div>
                 </div>
@@ -98,16 +99,23 @@
     </div>
 </div>
 
-{{if(options.updateData.message)}}
+
 <div class="row justify-content-md-center">
-    <div class="col-md-6 ">
-        <div class="alert alert-{{updateData.color}} border-{{updateData.color}}  text-center" role="alert">
-            <a href="{{updateData.artifactsLink}}" target="_blank" class="alert-link">{{updateData.message}}</a> <br>
-            {{updateData.subtext}}
-        </div>
+    <div class="col-md-6 text-center">
+        {{if(options.versionData.message)}}
+            <div class="alert alert-{{versionData.color}} border-{{versionData.color}}" role="alert">
+                <a href="{{versionData.artifactsLink}}" target="_blank" class="alert-link">{{versionData.message}}</a> <br>
+                {{versionData.subtext}}
+            </div>
+        {{/if}}
+        {{if(options.txAdminVersion.includes('-'))}}
+            <span class="text-danger font-weight-bold">
+                You are using a pre-release version of txAdmin destined for developers and beta testers only! <br>
+                Your server stability might be impacted by this.
+            </span>
+        {{/if}}
     </div>
 </div>
-{{/if}}
 
 
 {{include("footer")/}}
