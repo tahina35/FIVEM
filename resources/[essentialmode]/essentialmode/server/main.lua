@@ -2,11 +2,11 @@
 --  GNU AFFERO GENERAL PUBLIC LICENSE  --
 --     Version 3, 19 November 2007     --
 
-_VERSION = '6.3.0'
+_VERSION = '6.4.2'
 _FirstCheckPerformed = false
 _UUID = LoadResourceFile(GetCurrentResourceName(), "uuid") or "unknown"
-_Prefix = '^2[EssentialMode]^0'
-_PrefixError = '^1[EssentialMode]^0'
+_Prefix = GetConvar("es_prefix", '^2[EssentialMode]^0')
+_PrefixError = GetConvar("es_errorprefix", '^1[EssentialMode]^0')
 
 -- Server
 
@@ -16,9 +16,8 @@ local VersionAPIRequest = "https://api.kanersps.pw/em/version?version=" .. _VERS
 function performVersionCheck()
 	print("Performing version check against: " .. VersionAPIRequest .. "\n")
 	PerformHttpRequest(VersionAPIRequest, function(err, rText, headers)
-		local decoded = json.decode(rText)
-
-		if err == 200 then
+		if err == 200 and rText ~= nil then
+			local decoded = json.decode(rText)
 			if(not _FirstCheckPerformed)then
 				print("\n" .. _Prefix .. " Current version: " .. _VERSION)
 				print(_Prefix .. " Updater version: " .. decoded.newVersion .. "\n")
@@ -51,7 +50,13 @@ function performVersionCheck()
 			end
 
 			if decoded.extra then
-				print(decoded.extra)
+				if(show_zap ~= "1")then
+					print(decoded.extra)
+				else
+					if(decoded.extra ~= "^1Advertisement: ^7Want to have EssentialMode pre-installed on a good and affordable server host? Go to the following link: https://zap-hosting.com/EssentialMode")then
+						print(decoded.extra)
+					end
+				end
 			end
 		else
 			print(_Prefix .. " Updater version: UPDATER UNAVAILABLE")
@@ -359,8 +364,12 @@ end)
 
 RegisterServerEvent('es:updatePositions')
 AddEventHandler('es:updatePositions', function(x, y, z)
-	if(Users[source])then
-		Users[source].setCoords(x, y, z)
+	if(settings.defaultSettings.sendPosition == "0")then
+		TriggerClientEvent("es:disableClientPosition", source)
+	else
+		if(Users[source])then
+			Users[source].setCoords(x, y, z)
+		end
 	end
 end)
 

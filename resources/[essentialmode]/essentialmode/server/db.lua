@@ -56,6 +56,8 @@ function db.firstRunCheck()
 				log('== Unknown error, (' .. err .. '): ' .. rText .. ' ==')
 			end
 		end, "PUT", "", {Authorization = "Basic " .. auth})
+	elseif settings.defaultSettings.defaultDatabase == '1' and settings.defaultSettings.enableCustomData ~= '1' then
+		TriggerEvent("es_sqlite:initialize")
 	else
 		TriggerEvent('es_db:firstRunCheck', ip, port)
 	end
@@ -152,13 +154,17 @@ local function updateDocument(docID, updates, callback)
 			end
 
 			requestDB('PUT', 'essentialmode/' .. docID, doc, {["Content-Type"] = 'application/json'}, function(err, rText, headers)
-				if not json.decode(rText).ok then
-					if err ~= 409 then
-						print(_PrefixError .. 'Error occurred while performing database request: could not update document error ' .. err .. ", returned: " .. rText)
-					end
+				if rText == nil then
+					print(_PrefixError .. 'Error occurred while performing database request: could not update document error ' .. err )
 				else
-					if callback then
-						callback(rText)
+					if not json.decode(rText).ok then
+						if err ~= 409 then
+							print(_PrefixError .. 'Error occurred while performing database request: could not update document error ' .. err .. ", returned: " .. rText)
+						end
+					else
+						if callback then
+							callback(rText)
+						end
 					end
 				end
 			end)
@@ -175,6 +181,8 @@ function db.updateUser(identifier, new, callback)
 				if callback then callback(returned) end
 			end)
 		end)
+	elseif settings.defaultSettings.defaultDatabase == '1' and settings.defaultSettings.enableCustomData ~= '1' then
+		TriggerEvent('es_sqlite:updateUser', identifier, new, callback)
 	else
 		TriggerEvent('es_db:updateUser', identifier, new, callback)
 	end
@@ -193,6 +201,8 @@ function db.createUser(identifier, license, callback)
 		else
 			print(_PrefixError .. "Error occurred while creating user, missing parameter or incorrect parameter: identifier")
 		end
+	elseif settings.defaultSettings.defaultDatabase == '1' and settings.defaultSettings.enableCustomData ~= '1' then
+		TriggerEvent("es_sqlite:createUser", identifier, license, tonumber(settings.defaultSettings.startingCash), tonumber(settings.defaultSettings.startingBank), "user", 0, "", callback)
 	else
 		TriggerEvent('es_db:createUser', identifier, license, tonumber(settings.defaultSettings.startingCash), tonumber(settings.defaultSettings.startingBank), callback)
 	end
@@ -213,6 +223,8 @@ function db.doesUserExist(identifier, callback)
 		else
 			print(_PrefixError .. "Error occurred while checking existance user, missing parameter or incorrect parameter: identifier")
 		end
+	elseif settings.defaultSettings.defaultDatabase == '1' and settings.defaultSettings.enableCustomData ~= '1' then
+		TriggerEvent("es_sqlite:doesUserExist", identifier, callback)
 	else
 		TriggerEvent('es_db:doesUserExist', identifier, callback)
 	end
@@ -230,6 +242,8 @@ function db.retrieveUser(identifier, callback)
 		else
 			print(_PrefixError .. "Error occurred while retrieving user, missing parameter or incorrect parameter: identifier")
 		end
+	elseif settings.defaultSettings.defaultDatabase == '1' and settings.defaultSettings.enableCustomData ~= '1' then
+		TriggerEvent("es_sqlite:retrieveUser", identifier, callback)
 	else
 		TriggerEvent('es_db:retrieveUser', identifier, callback)
 	end
