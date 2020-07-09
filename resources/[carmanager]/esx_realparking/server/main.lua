@@ -93,7 +93,6 @@ ESX.RegisterServerCallback("esx_realparking:driveCar", function(source, cb, vehi
 				if type(rs) == 'table' and #rs > 0 and rs[1] ~= nil then
 					local fee         = math.floor(((os.time() - rs[1].time) / 86400) * Config.ParkingLocations[rs[1].parking].fee)
 					local playerMoney = xPlayer.getMoney()
-					local parkingCard = xPlayer.getInventoryItem('parkingcard').count
 					if parkingCard > 0 then
 						fee = 0
 					end

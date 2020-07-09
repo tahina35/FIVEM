@@ -135,10 +135,13 @@ Config.GradeVehicles = {
 			value = 'shamal'
 		},
 		miljet = {
-			label = 'cargoplane',
-			value = 'cargoplane'
-		}
-		
+			label = 'Miljet',
+			value = 'miljet'
+		},
+		airbus = { -- This is from a mod, you should probably remove this or change it to avoid issues!
+			label = 'Airbus A350',
+			value = 'a350'
+		},
 	},
 	
 }

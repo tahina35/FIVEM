@@ -1,19 +1,10 @@
 local trunkData = nil
-local canOpenTrunkInventory = true
-
-AddEventHandler('esx_inventoryhud:disableOpen', function()
-    closeInventory()
-    canOpenTrunkInventory = false
-end)
-AddEventHandler("esx_inventoryhud:enableOpen", function()
-    canOpenTrunkInventory = true
-end)
 
 RegisterNetEvent("esx_inventoryhud:openTrunkInventory")
 AddEventHandler(
     "esx_inventoryhud:openTrunkInventory",
-    function(data, blackMoney, cashMoney, inventory, weapons)
-        setTrunkInventoryData(data, blackMoney, cashMoney, inventory, weapons)
+    function(data, blackMoney, inventory, weapons)
+        setTrunkInventoryData(data, blackMoney, inventory, weapons)
         openTrunkInventory()
     end
 )
@@ -21,12 +12,12 @@ AddEventHandler(
 RegisterNetEvent("esx_inventoryhud:refreshTrunkInventory")
 AddEventHandler(
     "esx_inventoryhud:refreshTrunkInventory",
-    function(data, blackMoney, cashMoney, inventory, weapons)
-        setTrunkInventoryData(data, blackMoney, cashMoney, inventory, weapons)
+    function(data, blackMoney, inventory, weapons)
+        setTrunkInventoryData(data, blackMoney, inventory, weapons)
     end
 )
 
-function setTrunkInventoryData(data, blackMoney, cashMoney, inventory, weapons)
+function setTrunkInventoryData(data, blackMoney, inventory, weapons)
     trunkData = data
 
     SendNUIMessage(
@@ -46,21 +37,7 @@ function setTrunkInventoryData(data, blackMoney, cashMoney, inventory, weapons)
             name = "black_money",
             usable = false,
             rare = false,
-            weight = -1,
-            canRemove = false
-        }
-        table.insert(items, accountData)
-    end
-	
-	if cashMoney > 0 then
-        accountData = {
-            label = _U("cash"),
-            count = cashMoney,
-            type = "item_money",
-            name = "cash",
-            usable = false,
-            rare = false,
-            weight = -1,
+            limit = -1,
             canRemove = false
         }
         table.insert(items, accountData)
@@ -74,7 +51,7 @@ function setTrunkInventoryData(data, blackMoney, cashMoney, inventory, weapons)
                 inventory[key].type = "item_standard"
                 inventory[key].usable = false
                 inventory[key].rare = false
-                inventory[key].weight = -1
+                inventory[key].limit = -1
                 inventory[key].canRemove = false
                 table.insert(items, inventory[key])
             end
@@ -90,7 +67,7 @@ function setTrunkInventoryData(data, blackMoney, cashMoney, inventory, weapons)
                     {
                         label = weapons[key].label,
                         count = weapons[key].ammo,
-                        weight = -1,
+                        limit = -1,
                         type = "item_weapon",
                         name = weapons[key].name,
                         usable = false,
@@ -111,19 +88,17 @@ function setTrunkInventoryData(data, blackMoney, cashMoney, inventory, weapons)
 end
 
 function openTrunkInventory()
-    if canOpenTrunkInventory then -- adds a check if trunk inventory can be opened
-        loadPlayerInventory()
-        isInInventory = true
+    loadPlayerInventory()
+    isInInventory = true
 
-        SendNUIMessage(
-            {
-                action = "display",
-                type = "trunk"
-            }
-        )
+    SendNUIMessage(
+        {
+            action = "display",
+            type = "trunk"
+        }
+    )
 
-        SetNuiFocus(true, true)
-    end
+    SetNuiFocus(true, true)
 end
 
 RegisterNUICallback(

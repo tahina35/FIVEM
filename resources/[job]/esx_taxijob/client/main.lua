@@ -195,9 +195,12 @@ function OpenVehicleSpawnerMenu()
 			end
 
 			menu.close()
+			local newPlate = "TAXI " .. math.random(100,900)
 			ESX.Game.SpawnVehicle(data.current.model, Config.Zones.VehicleSpawnPoint.Pos, Config.Zones.VehicleSpawnPoint.Heading, function(vehicle)
 				local playerPed = PlayerPedId()
+				SetVehicleNumberPlateText(vehicle, newPlate)
 				TaskWarpPedIntoVehicle(playerPed, vehicle, -1)
+				TriggerServerEvent('esx_vehiclelock:givekey', 'no', newPlate)
 			end)
 		end, function(data, menu)
 			CurrentAction     = 'vehicle_spawner'
@@ -217,9 +220,10 @@ function DeleteJobVehicle()
 		TriggerServerEvent('esx_society:putVehicleInGarage', 'taxi', vehicleProps)
 		ESX.Game.DeleteVehicle(CurrentActionData.vehicle)
 	else
+
 		if IsInAuthorizedVehicle() then
 			ESX.Game.DeleteVehicle(CurrentActionData.vehicle)
-
+			TriggerServerEvent('esx_vehiclelock:deletekeyjobs','no', plate)
 			if Config.MaxInService ~= -1 then
 				TriggerServerEvent('esx_service:disableService', 'taxi')
 			end

@@ -3,28 +3,17 @@ var disabled = false;
 var disabledFunction = null;
 
 window.addEventListener("message", function (event) {
-    if (event.data.action == "setWeight") {
-        $("#weight").html(event.data.text);
-    }
     if (event.data.action == "display") {
         type = event.data.type
         disabled = false;
 
-		if (type === "normal") {
+        if (type === "normal") {
             $(".info-div").hide();
         } else if (type === "trunk") {
             $(".info-div").show();
         } else if (type === "property") {
             $(".info-div").hide();
-        } else if (type === "glovebox") {
-            $(".info-div").show();
         } else if (type === "player") {
-            $(".info-div").show();
-        } else if (type === "vault") {
-            $(".info-div").show();
-        } else if (type === "motel") {
-            $(".info-div").show();
-        } else if (type === "shop") {
             $(".info-div").show();
         }
 
@@ -74,8 +63,6 @@ window.addEventListener("message", function (event) {
         });
     } else if (event.data.action == "setSecondInventoryItems") {
         secondInventorySetup(event.data.itemList);
-    } else if (event.data.action == "setShopInventoryItems") {
-        shopInventorySetup(event.data.itemList);
     } else if (event.data.action == "setInfoText") {
         $(".info-div").html(event.data.text);
     } else if (event.data.action == "nearPlayers") {
@@ -122,20 +109,6 @@ function secondInventorySetup(items) {
 
         $("#otherInventory").append('<div class="slot"><div id="itemOther-' + index + '" class="item" style = "background-image: url(\'img/items/' + item.name + '.png\')">' +
             '<div class="item-count">' + count + '</div> <div class="item-name">' + item.label + '</div> </div ><div class="item-name-bg"></div></div>');
-        $('#itemOther-' + index).data('item', item);
-        $('#itemOther-' + index).data('inventory', "second");
-    });
-}
-
-
-function shopInventorySetup(items) {
-    $("#otherInventory").html("");
-    $.each(items, function (index, item) {
-        //count = setCount(item)
-        cost = setCost(item);
-
-        $("#otherInventory").append('<div class="slot"><div id="itemOther-' + index + '" class="item" style = "background-image: url(\'img/items/' + item.name + '.png\')">' +
-            '<div class="item-count">' + cost + '</div> <div class="item-name">' + item.label + '</div> </div ><div class="item-name-bg"></div></div>');
         $('#itemOther-' + index).data('item', item);
         $('#itemOther-' + index).data('inventory', "second");
     });
@@ -197,18 +170,6 @@ function setCount(item) {
     }
 
     return count;
-}
-
-function setCost(item) {
-    cost = item.price
-
-    if (item.price == 0){
-        cost = "$" + item.price
-    }
-    if (item.price > 0) {
-        cost = "$" + item.price
-    }
-    return cost;
 }
 
 function formatMoney(n, c, d, t) {
@@ -309,8 +270,8 @@ $(document).ready(function () {
             }
         }
     });
-	
-$('#playerInventory').droppable({
+
+    $('#playerInventory').droppable({
         drop: function (event, ui) {
             itemData = ui.draggable.data("item");
             itemInventory = ui.draggable.data("inventory");
@@ -327,33 +288,9 @@ $('#playerInventory').droppable({
                     item: itemData,
                     number: parseInt($("#count").val())
                 }));
-            } else if (type === "glovebox" && itemInventory === "second") {
-                disableInventory(500);
-                $.post("http://esx_inventoryhud/TakeFromGlovebox", JSON.stringify({
-                    item: itemData,
-                    number: parseInt($("#count").val())
-                }));
             } else if (type === "player" && itemInventory === "second") {
                 disableInventory(500);
                 $.post("http://esx_inventoryhud/TakeFromPlayer", JSON.stringify({
-                    item: itemData,
-                    number: parseInt($("#count").val())
-                }));
-            } else if (type === "vault" && itemInventory === "second") {
-                disableInventory(500);
-                $.post("http://esx_inventoryhud/TakeFromVault", JSON.stringify({
-                    item: itemData,
-                    number: parseInt($("#count").val())
-                }));
-            } else if (type === "motel" && itemInventory === "second") {
-                disableInventory(500);
-                $.post("http://esx_inventoryhud/TakeFromMotel", JSON.stringify({
-                    item: itemData,
-                    number: parseInt($("#count").val())
-                }));
-            } else if (type === "shop" && itemInventory === "second") {
-                disableInventory(500);
-                $.post("http://esx_inventoryhud/TakeFromShop", JSON.stringify({
                     item: itemData,
                     number: parseInt($("#count").val())
                 }));
@@ -361,7 +298,7 @@ $('#playerInventory').droppable({
         }
     });
 
-$('#otherInventory').droppable({
+    $('#otherInventory').droppable({
         drop: function (event, ui) {
             itemData = ui.draggable.data("item");
             itemInventory = ui.draggable.data("inventory");
@@ -375,24 +312,6 @@ $('#otherInventory').droppable({
             } else if (type === "property" && itemInventory === "main") {
                 disableInventory(500);
                 $.post("http://esx_inventoryhud/PutIntoProperty", JSON.stringify({
-                    item: itemData,
-                    number: parseInt($("#count").val())
-                }));
-            } else if (type === "glovebox" && itemInventory === "main") {
-                disableInventory(500);
-                $.post("http://esx_inventoryhud/PutIntoGlovebox", JSON.stringify({
-                    item: itemData,
-                    number: parseInt($("#count").val())
-                }));
-				} else if (type === "vault" && itemInventory === "main") {
-                disableInventory(500);
-                $.post("http://esx_inventoryhud/PutIntoVault", JSON.stringify({
-                    item: itemData,
-                    number: parseInt($("#count").val())
-                }));
-				} else if (type === "motel" && itemInventory === "main") {
-                disableInventory(500);
-                $.post("http://esx_inventoryhud/PutIntoMotel", JSON.stringify({
                     item: itemData,
                     number: parseInt($("#count").val())
                 }));

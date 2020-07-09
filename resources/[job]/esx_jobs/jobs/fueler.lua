@@ -9,7 +9,7 @@ Config.Jobs.fueler = {
 
 		Truck = {
 			Spawner = 1,
-			Hash = 'phantom',
+			Hash = 'hauler',
 			Trailer = 'tanker',
 			HasCaution = true
 		}
@@ -42,9 +42,9 @@ Config.Jobs.fueler = {
 				{
 					name = _U('f_fuel'),
 					db_name = 'petrol',
-					time = 5,
-					max = 24,
-					add = 1,
+					time = 1,
+					max = 100,
+					add = 5,
 					remove = 1,
 					requires = 'nothing',
 					requires_name = 'Nothing',
@@ -67,9 +67,9 @@ Config.Jobs.fueler = {
 				{
 					name = _U('f_fuel_refine'),
 					db_name = 'petrol_raffin',
-					time = 5,
-					max = 24,
-					add = 1,
+					time = 1,
+					max = 100,
+					add = 5,
 					remove = 2,
 					requires = 'petrol',
 					requires_name = _U('f_fuel'),
@@ -92,8 +92,8 @@ Config.Jobs.fueler = {
 				{
 					name = _U('f_gas'),
 					db_name = 'essence',
-					time = 5,
-					max = 24,
+					time = 1,
+					max = 100,
 					add = 2,
 					remove = 1,
 					requires = 'petrol_raffin',
@@ -147,8 +147,8 @@ Config.Jobs.fueler = {
 		},
 
 		Delivery = {
-			Pos = {x = 491.40, y = -2163.37, z = 4.91},
-			Color = {r = 204, g = 204, b = 0},
+			Pos = {x = -946.06, y = -2976.55, z = 13.95},
+			Color = {r = 0, g = 204, b = 0},
 			Size = {x = 10.0, y = 10.0, z = 1.0},
 			Marker = 1,
 			Blip = true,
@@ -159,9 +159,9 @@ Config.Jobs.fueler = {
 				{
 					name = _U('delivery'),
 					time = 0.5,
-					remove = 1,
+					remove = 10,
 					max = 100, -- if not present, probably an error at itemQtty >= item.max in esx_jobs_sv.lua
-					price = 61,
+					price = 100,
 					requires = 'essence',
 					requires_name = _U('f_gas'),
 					drop = 100

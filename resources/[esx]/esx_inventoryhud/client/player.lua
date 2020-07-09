@@ -23,20 +23,16 @@ AddEventHandler(
     end
 )
 
-AddEventHandler("esx_inventoryhud:openPlayerInventory", function(target, playerName)
-	PlayerData = ESX.GetPlayerData()
-    if PlayerData.job and PlayerData.job.name == 'police' or PlayerData.job.name == 'ambulance' then
+RegisterNetEvent("esx_inventoryhud:openPlayerInventory")
+AddEventHandler(
+    "esx_inventoryhud:openPlayerInventory",
+    function(target, playerName)
         targetPlayer = target
         targetPlayerName = playerName
         setPlayerInventoryData()
         openPlayerInventory()
-        -- triggers server event that disables target inventory opening
-        TriggerServerEvent('esx_inventoryhud:disableTargetInv', target) 
-	else
-		ESX.ShowNotification('Negeras berniukas')
-		-- add discord log if you would like to fag
-	end
-end)
+    end
+)
 
 function refreshPlayerInventory()
     setPlayerInventoryData()
@@ -60,6 +56,7 @@ function setPlayerInventoryData()
             weapons = data.weapons
 
             if Config.IncludeCash and money ~= nil and money > 0 then
+                for key, value in pairs(accounts) do
                     moneyData = {
                         label = _U("cash"),
                         name = "cash",
@@ -67,11 +64,12 @@ function setPlayerInventoryData()
                         count = money,
                         usable = false,
                         rare = false,
-                        weight = -1,
+                        limit = -1,
                         canRemove = true
                     }
 
                     table.insert(items, moneyData)
+                end
             end
 
             if Config.IncludeAccounts and accounts ~= nil then
@@ -87,7 +85,7 @@ function setPlayerInventoryData()
                                 name = accounts[key].name,
                                 usable = false,
                                 rare = false,
-                                weight = -1,
+                                limit = -1,
                                 canRemove = canDrop
                             }
                             table.insert(items, accountData)
@@ -111,14 +109,14 @@ function setPlayerInventoryData()
                 for key, value in pairs(weapons) do
                     local weaponHash = GetHashKey(weapons[key].name)
                     local playerPed = PlayerPedId()
-                    if weapons[key].name ~= "WEAPON_UNARMED" then
+                    if HasPedGotWeapon(playerPed, weaponHash, false) and weapons[key].name ~= "WEAPON_UNARMED" then
                         local ammo = GetAmmoInPedWeapon(playerPed, weaponHash)
                         table.insert(
                             items,
                             {
                                 label = weapons[key].label,
                                 count = ammo,
-                                weight = -1,
+                                limit = -1,
                                 type = "item_weapon",
                                 name = weapons[key].name,
                                 usable = false,
